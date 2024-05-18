@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 [UnitTitle("On Controllable Button Action")]
 public class OnControllableButtonAction : ReflectiveEventUnit<OnControllableAxis2DAction>
 {
+    public ValueInput InputName;
     [OutputType(typeof(Controllable))]
     public ValueOutput Controllable;
     [OutputType(typeof(InputActionPhase))]
@@ -13,8 +14,21 @@ public class OnControllableButtonAction : ReflectiveEventUnit<OnControllableAxis
     [OutputType(typeof(bool))]
     public ValueOutput Value;
 
-    public static void Invoke(Controllable controllable, InputActionPhase phase, bool value)
+    public static void Invoke(Controllable controllable, string InputName, InputActionPhase phase, bool value)
     {
-        ModularInvoke(controllable.gameObject, ("Controllable", controllable), ("Phase", phase), ("Value", value));
+        ModularInvoke(controllable.gameObject, ("InputName", InputName), ("Controllable", controllable), ("Phase", phase), ("Value", value));
+    }
+
+    protected override bool ShouldTrigger(Flow flow, SerializableDictionary<string, object> args)
+    {
+        if (flow.GetValue<string>(InputName) != (string)args["InputName"]) return false;
+        if (EventTarget == null || EventTarget.connection == null) return true;
+        var target = flow.GetValue<object>(EventTarget);
+        return (target == InvokationTarget || target == null);
+    }
+    protected override void Definition()
+    {
+        base.Definition();
+        InputName = ValueInput<string>("Input Name", " ");
     }
 }

@@ -19,7 +19,7 @@ public class CreateController : Unit
         });
         Out = ControlOutput("");
 
-        Name = ValueInput<string>("Name");
+        Name = ValueInput<string>("Name", " ");
         CreatedController = ValueOutput<Controller>("Created Controller");
     }
 }

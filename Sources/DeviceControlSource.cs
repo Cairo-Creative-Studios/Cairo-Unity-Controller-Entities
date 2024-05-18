@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,11 +8,14 @@ public class DeviceControlSource : ControlSource
 
     private SerializableDictionary<string, SerializableDictionary<string, ControllerActionValueType>> _actions = new();
     public override SerializableDictionary<string, SerializableDictionary<string, ControllerActionValueType>> Actions { get => _actions; }
-
     private Controller _controller;
     public override Controller Controller { get => _controller; set => _controller = value; }
 
-    public DeviceControlSource(InputActionAsset inputActionAsset, string inputMap = "")
+    private InputActionAsset _inputActionAsset;
+
+    private PlayerInput _playerInput;
+
+    public void AssignActions(InputActionAsset inputActionAsset, string inputMap = "")
     {
         if(inputMap == "")
         {
@@ -21,6 +25,10 @@ public class DeviceControlSource : ControlSource
                 foreach (var action in map.actions)
                 {
                     action.Enable();
+
+                    action.started += OnInputAction;
+                    action.performed += OnInputAction;
+                    action.canceled += OnInputAction;
 
                     switch(action.ReadValueAsObject())
                     {
@@ -37,6 +45,7 @@ public class DeviceControlSource : ControlSource
                 }
             }
         }
+        _inputActionAsset = inputActionAsset;
     }
 
     public void OnInputAction(InputAction.CallbackContext callbackContext)
@@ -56,5 +65,9 @@ public class DeviceControlSource : ControlSource
                     break;
             }
         }
+    }
+
+    public override void ApplyToController(Controller controller)
+    {
     }
 }

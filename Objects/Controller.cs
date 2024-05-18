@@ -5,7 +5,19 @@ using UnityEngine.InputSystem;
 
 public class Controller : Singleton<Controller>
 {
-    public ControlSource InputSource;
+    public ControlSource _inputSource;
+    public ControlSource InputSource
+    {
+        get
+        {
+            return _inputSource;
+        }
+        set
+        {
+            _inputSource = value;
+            _inputSource.ApplyToController(this);
+        }
+    }
     public string Map = "";
 
     private static List<Controller> _controllers;
@@ -21,11 +33,12 @@ public class Controller : Singleton<Controller>
         {
             if(_cachedControllerPrefabs == null)
             {
+                _cachedControllerPrefabs = new();
                 var prefabs = ExtendedResources.LoadAllByComponent<Controller>("");
                 foreach (var prefab in prefabs)
                     _cachedControllerPrefabs.Add(prefab.name, prefab);
             }
-            return ControllerPrefabs;
+            return _cachedControllerPrefabs;
         }
     }
 
@@ -65,7 +78,7 @@ public class Controller : Singleton<Controller>
     {
         if (this.Map == "" || this.Map == map)
         {
-            OnControllerAxisAction.Invoke(this, phase, value);
+            OnControllerAxisAction.Invoke(this, actionName, phase, value);
 
             foreach(var controllable in PossessedControllables)
             {
@@ -73,7 +86,7 @@ public class Controller : Singleton<Controller>
                 {
                     controllable.OnControllerAxisInput(actionName, value, phase);
 
-                    OnControllableAxisAction.Invoke(controllable, phase, value);
+                    OnControllableAxisAction.Invoke(controllable, actionName, phase, value);
                 }
             }
         }
@@ -87,7 +100,7 @@ public class Controller : Singleton<Controller>
     {
         if (this.Map == "" || this.Map == map)
         {
-            OnControllerAxis2DAction.Invoke(this, phase, value);
+            OnControllerAxis2DAction.Invoke(this, actionName, phase, value);
 
             foreach (var controllable in PossessedControllables)
             {
@@ -95,7 +108,7 @@ public class Controller : Singleton<Controller>
                 {
                     controllable.OnControllerAxis2DInput(actionName, value, phase);
 
-                    OnControllableAxis2DAction.Invoke(controllable, phase, value);
+                    OnControllableAxis2DAction.Invoke(controllable, actionName, phase, value);
                 }
             }
         }
@@ -109,7 +122,7 @@ public class Controller : Singleton<Controller>
     {
         if (this.Map == "" || this.Map == map)
         {
-            OnControllerButtonAction.Invoke(this, phase, value);
+            OnControllerButtonAction.Invoke(this, actionName, phase, value);
 
             foreach (var controllable in PossessedControllables)
             {
@@ -117,7 +130,7 @@ public class Controller : Singleton<Controller>
                 {
                     controllable.OnControllerButtonInput(actionName, value, phase);
 
-                    OnControllableButtonAction.Invoke(controllable, phase, value);
+                    OnControllableButtonAction.Invoke(controllable, actionName, phase, value);
                 }
             }
         }

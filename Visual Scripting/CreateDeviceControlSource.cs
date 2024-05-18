@@ -1,4 +1,5 @@
 using Unity.VisualScripting;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 [UnitCategory("Controllables/Sources")]
@@ -14,7 +15,10 @@ public class CreateDeviceControlSource : Unit
     {
         In = ControlInput("", (flow) =>
         {
-            flow.SetValue(DeviceControlSource, new DeviceControlSource(flow.GetValue<InputActionAsset>(InputActionAsset)));
+            var go = new GameObject("Device Control Source");
+            var controlSource = go.AddComponent<DeviceControlSource>();
+            controlSource.AssignActions(flow.GetValue<InputActionAsset>(InputActionAsset));
+            flow.SetValue(DeviceControlSource, controlSource);
             return Out;
         });
         Out = ControlOutput("");

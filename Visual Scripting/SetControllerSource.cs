@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Unity.VisualScripting;
 
 public class SetControllerSource : Unit
@@ -14,6 +15,7 @@ public class SetControllerSource : Unit
             var controller = flow.GetValue<Controller>(TargetController);
             var source = flow.GetValue<ControlSource>(ControlSource);
             controller.InputSource = source;
+            source.Controller = controller;
             return Out;
         });
         Out = ControlOutput("");
