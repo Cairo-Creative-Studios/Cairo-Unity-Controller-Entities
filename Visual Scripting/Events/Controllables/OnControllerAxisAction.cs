@@ -1,3 +1,4 @@
+using Cairo.CacheBoxing;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
 
@@ -10,10 +11,10 @@ public class OnControllableAxisAction : ReflectiveEventUnit<OnControllableAxisAc
     public ValueOutput Controllable;
     [OutputType(typeof(InputActionPhase))]
     public ValueOutput Phase;
-    [OutputType(typeof(float))]
+    [OutputType(typeof(BoxedFloat))]
     public ValueOutput Value;
 
-    public static void Invoke(Controllable controllable, string InputName, InputActionPhase phase, float value)
+    public static void Invoke(Controllable controllable, string InputName, InputActionPhase phase, BoxedFloat value)
     {
         ModularInvoke(controllable.gameObject, ("InputName", InputName), ("Controllable", controllable), ("Phase", phase), ("Value", value));
     }

@@ -1,3 +1,4 @@
+using Cairo.CacheBoxing;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,10 +12,10 @@ public class OnControllableAxis2DAction : ReflectiveEventUnit<OnControllableAxis
     public ValueOutput Controllable;
     [OutputType(typeof(InputActionPhase))]
     public ValueOutput Phase;
-    [OutputType(typeof(Vector2))]
+    [OutputType(typeof(BoxedVector2))]
     public ValueOutput Value;
 
-    public static void Invoke(Controllable controllable, string InputName, InputActionPhase phase, Vector2 value)
+    public static void Invoke(Controllable controllable, string InputName, InputActionPhase phase, BoxedVector2 value)
     {
         ModularInvoke(controllable.gameObject, ("InputName", InputName), ("Controllable", controllable), ("Phase", phase), ("Value", value));
     }
