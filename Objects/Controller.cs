@@ -1,3 +1,5 @@
+using Cairo.CacheBoxing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -74,11 +76,11 @@ public class Controller : Singleton<Controller>
     /// Called by an Input Control Source, passing an Axis Value to the Controllables that the Controller has possessed.
     /// </summary>
     /// <param name="value"></param>
-    public virtual void OnControllerAxisInput(string map, string actionName, float value, InputActionPhase phase = InputActionPhase.Performed)
+    public virtual void OnControllerAxisInput(string map, string actionName, float value, ControllerActionPhase phase = ControllerActionPhase.Held)
     {
         if (this.Map == "" || this.Map == map)
         {
-            OnControllerAxisAction.Invoke(this, actionName, phase, value);
+            OnControllerAxisAction.Invoke(this, actionName, phase, (BoxedFloat)value);
 
             foreach(var controllable in PossessedControllables)
             {
@@ -86,7 +88,7 @@ public class Controller : Singleton<Controller>
                 {
                     controllable.OnControllerAxisInput(actionName, value, phase);
 
-                    OnControllableAxisAction.Invoke(controllable, actionName, phase, value);
+                    OnControllableAxisAction.Invoke(controllable, actionName, phase, (BoxedFloat)value);
                 }
             }
         }
@@ -96,11 +98,11 @@ public class Controller : Singleton<Controller>
     /// Called by an Input Control Source, passing an Axis 2D Value to the Controllables that the Controller has possessed.
     /// </summary>
     /// <param name="value"></param>
-    public virtual void OnControllerAxis2DInput(string map, string actionName, Vector2 value, InputActionPhase phase = InputActionPhase.Performed)
+    public virtual void OnControllerAxis2DInput(string map, string actionName, Vector2 value, ControllerActionPhase phase = ControllerActionPhase.Held)
     {
         if (this.Map == "" || this.Map == map)
         {
-            OnControllerAxis2DAction.Invoke(this, actionName, phase, value);
+            OnControllerAxis2DAction.Invoke(this, actionName, phase, (BoxedVector2)value);
 
             foreach (var controllable in PossessedControllables)
             {
@@ -108,7 +110,7 @@ public class Controller : Singleton<Controller>
                 {
                     controllable.OnControllerAxis2DInput(actionName, value, phase);
 
-                    OnControllableAxis2DAction.Invoke(controllable, actionName, phase, value);
+                    OnControllableAxis2DAction.Invoke(controllable, actionName, phase, (BoxedVector2)value);
                 }
             }
         }
@@ -118,11 +120,11 @@ public class Controller : Singleton<Controller>
     /// Called by an Input Control Source, passing an Axis 2D Value to the Controllables that the Controller has possessed.
     /// </summary>
     /// <param name="value"></param>
-    public virtual void OnControllerButtonInput(string map, string actionName, bool value, InputActionPhase phase = InputActionPhase.Performed)
+    public virtual void OnControllerButtonInput(string map, string actionName, bool value, ControllerActionPhase phase = ControllerActionPhase.Held)
     {
         if (this.Map == "" || this.Map == map)
         {
-            OnControllerButtonAction.Invoke(this, actionName, phase, value);
+            OnControllerButtonAction.Invoke(this, actionName, phase, (BoxedBool)value);
 
             foreach (var controllable in PossessedControllables)
             {
@@ -130,7 +132,7 @@ public class Controller : Singleton<Controller>
                 {
                     controllable.OnControllerButtonInput(actionName, value, phase);
 
-                    OnControllableButtonAction.Invoke(controllable, actionName, phase, value);
+                    OnControllableButtonAction.Invoke(controllable, actionName, phase, (BoxedBool)value);
                 }
             }
         }

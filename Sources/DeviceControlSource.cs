@@ -1,73 +1,68 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.InputSystem.InputAction;
 
 public class DeviceControlSource : ControlSource
 {
     public override ControllerSourceType ControllerSourceType { get => ControllerSourceType.Device; }
-
-    private SerializableDictionary<string, SerializableDictionary<string, ControllerActionValueType>> _actions = new();
-    public override SerializableDictionary<string, SerializableDictionary<string, ControllerActionValueType>> Actions { get => _actions; }
-    private Controller _controller;
-    public override Controller Controller { get => _controller; set => _controller = value; }
-
-    private InputActionAsset _inputActionAsset;
-
-    private PlayerInput _playerInput;
+    private SerializableDictionary<string, SerializableDictionary<string, InputAction>> _inputActions = new();
+    protected InputAction _currentInputAction;
 
     public void AssignActions(InputActionAsset inputActionAsset, string inputMap = "")
     {
-        if(inputMap == "")
+        if (inputMap == "")
         {
             foreach (var map in inputActionAsset.actionMaps)
             {
                 _actions.Add(map.name, new());
+                _inputActions.Add(map.name, new());
+
                 foreach (var action in map.actions)
                 {
                     action.Enable();
+                    _inputActions[map.name].Add(action.name, action);
 
-                    action.started += OnInputAction;
-                    action.performed += OnInputAction;
-                    action.canceled += OnInputAction;
-
-                    switch(action.ReadValueAsObject())
+                    switch (action.type)
                     {
-                        case float _:
-                            _actions[map.name].Add(action.name, ControllerActionValueType.Axis);
+                        case InputActionType.PassThrough:
+                            _actions[map.name].Add(action.name, new(map.name, action.name, ControllerActionValueType.Axis, ControllerActionPhase.Inactive));
                             break;
-                        case Vector2 _:
-                            _actions[map.name].Add(action.name, ControllerActionValueType.Axis2D);
+                        case InputActionType.Value:
+                            _actions[map.name].Add(action.name, new(map.name, action.name, ControllerActionValueType.Axis2D, ControllerActionPhase.Inactive));
                             break;
-                        case bool _:
-                            _actions[map.name].Add(action.name, ControllerActionValueType.Button);
+                        case InputActionType.Button:
+                            _actions[map.name].Add(action.name, new(map.name, action.name, ControllerActionValueType.Button, ControllerActionPhase.Inactive));
                             break;
                     }
                 }
             }
         }
-        _inputActionAsset = inputActionAsset;
     }
 
-    public void OnInputAction(InputAction.CallbackContext callbackContext)
-    {
-        if(Controller != null)
-        {
-            switch (callbackContext.ReadValueAsObject())
-            {
-                case float _:
-                    Controller.OnControllerAxisInput(callbackContext.action.actionMap.name, callbackContext.action.name, callbackContext.ReadValue<float>(), callbackContext.phase);
-                    break;
-                case Vector2 _:
-                    Controller.OnControllerAxis2DInput(callbackContext.action.actionMap.name, callbackContext.action.name, callbackContext.ReadValue<Vector2>(), callbackContext.phase);
-                    break;
-                case bool _:
-                    Controller.OnControllerButtonInput(callbackContext.action.actionMap.name, callbackContext.action.name, callbackContext.ReadValue<bool>(), callbackContext.phase);
-                    break;
-            }
-        }
-    }
 
     public override void ApplyToController(Controller controller)
     {
+    }
+
+    protected override void UpdateAction(string map, string action)
+    {
+        _currentControllerAction = Actions[map][action];
+        _currentInputAction = _inputActions[map][action];
+
+        if (_currentInputAction.IsPressed())
+        {
+            if (!(_currentControllerAction.Phase == ControllerActionPhase.Pressed && _currentControllerAction.Phase == ControllerActionPhase.Held))
+            {
+                _currentControllerAction.Phase = ControllerActionPhase.Pressed;
+            }
+            _currentControllerAction.Value = _currentInputAction.ReadValueAsObject();
+        }
+        else
+        if (_currentControllerAction.Phase == ControllerActionPhase.Pressed || _currentControllerAction.Phase == ControllerActionPhase.Held)
+        {
+            _currentControllerAction.Phase = ControllerActionPhase.Released;
+        }
+
+        base.UpdateAction(map, action);
     }
 }

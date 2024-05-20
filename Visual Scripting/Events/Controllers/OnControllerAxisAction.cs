@@ -9,12 +9,12 @@ public class OnControllerAxisAction : ReflectiveEventUnit<OnControllerAxisAction
     public ValueInput InputName;
     [OutputType(typeof(Controller))]
     public ValueOutput Controller;
-    [OutputType(typeof(InputActionPhase))]
+    [OutputType(typeof(ControllerActionPhase))]
     public ValueOutput Phase;
     [OutputType(typeof(BoxedFloat))]
     public ValueOutput Value;
 
-    public static void Invoke(Controller controller, string InputName, InputActionPhase phase, BoxedFloat value)
+    public static void Invoke(Controller controller, string InputName, ControllerActionPhase phase, BoxedFloat value)
     {
         ModularInvoke(controller.gameObject, ("InputName", InputName), ("Controller", controller), ("Phase", phase), ("Value", value));
     }

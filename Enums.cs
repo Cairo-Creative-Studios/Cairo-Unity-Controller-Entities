@@ -11,3 +11,11 @@ public enum ControllerActionValueType
     Axis2D,
     Button
 }
+
+public enum ControllerActionPhase
+{
+    Inactive,
+    Pressed,
+    Held,
+    Released
+}

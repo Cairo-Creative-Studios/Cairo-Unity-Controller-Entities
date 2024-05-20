@@ -10,12 +10,12 @@ public class OnControllableAxis2DAction : ReflectiveEventUnit<OnControllableAxis
     public ValueInput InputName;
     [OutputType(typeof(Controllable))]
     public ValueOutput Controllable;
-    [OutputType(typeof(InputActionPhase))]
+    [OutputType(typeof(ControllerActionPhase))]
     public ValueOutput Phase;
     [OutputType(typeof(BoxedVector2))]
     public ValueOutput Value;
 
-    public static void Invoke(Controllable controllable, string InputName, InputActionPhase phase, BoxedVector2 value)
+    public static void Invoke(Controllable controllable, string InputName, ControllerActionPhase phase, BoxedVector2 value)
     {
         ModularInvoke(controllable.gameObject, ("InputName", InputName), ("Controllable", controllable), ("Phase", phase), ("Value", value));
     }

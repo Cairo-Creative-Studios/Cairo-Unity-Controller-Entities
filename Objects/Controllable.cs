@@ -20,18 +20,18 @@ public class Controllable : MonoBehaviour
     }
 
 
-    public virtual void OnControllerAxisInput(string actionName, float value, InputActionPhase phase = InputActionPhase.Performed)
+    public virtual void OnControllerAxisInput(string actionName, float value, ControllerActionPhase phase = ControllerActionPhase.Held)
     {
 
     }
 
-    public virtual void OnControllerAxis2DInput(string actionName, Vector2 value, InputActionPhase phase = InputActionPhase.Performed)
+    public virtual void OnControllerAxis2DInput(string actionName, Vector2 value, ControllerActionPhase phase = ControllerActionPhase.Held)
     {
 
     }
 
 
-    public virtual void OnControllerButtonInput(string actionName, bool value, InputActionPhase phase = InputActionPhase.Performed)
+    public virtual void OnControllerButtonInput(string actionName, bool value, ControllerActionPhase phase = ControllerActionPhase.Held)
     {
 
     }
